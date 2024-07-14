@@ -1,0 +1,2 @@
+testText = "welcome"
+lastnameText = "Lastname"
