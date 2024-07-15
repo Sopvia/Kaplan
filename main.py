@@ -4,13 +4,19 @@ from createEntry import *
 from variables import *
 import sqlite3
 
+# ctk.set_default_color_theme("light-pink.json")
+# ctk.set_appearance_mode("light")
+
+connection = sqlite3.connect("addressBook.db")
+cursor = connection.cursor()
+
 language = "english"
 
 class root(ctk.CTk):
     def __init__(self):
         super().__init__(fg_color="white")
         
-        self.title("Address Book")
+        self.title("Kaplan - Your Address Book")
         self.geometry("600x600")
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -32,12 +38,11 @@ class overview(ctk.CTkFrame):
         self.newEntry = ctk.CTkButton(self, text="+", height=12, width=12, command=open_createEntry)
         self.newEntry.grid(row=1, column=1, padx=20, pady=20, sticky="ne")
 
+        self.settings = ctk.CTkButton(self, text="Settings", height=12, width=12, command=open_settings)
+        self.settings.grid(row=1, column=2, padx=20, pady=20, sticky="ne")
+
         self.test = ctk.CTkLabel(self, text=testText, text_color="white")
         self.test.grid(row=2, column=1, padx=20, pady=20)
-
-        self.settings = ctk.CTkButton(self, text="Settings", height=12, width=12, command=open_settings)
-        self.settings.grid(row=1, column=3, padx=20, pady=20, sticky="ne")
-
 
 class settings(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
