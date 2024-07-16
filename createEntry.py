@@ -1,6 +1,11 @@
-from tkinter import *
+from tkinter import messagebox
 import customtkinter as ctk
 from variables import *
+import sqlite3
+from datetime import datetime
+
+connection = sqlite3.connect("addressBook.db")
+cursor = connection.cursor()
 
 def open_createEntry():
     createEntry = ctk.CTkToplevel(fg_color="black")
@@ -8,6 +13,9 @@ def open_createEntry():
     createEntry.geometry("600x600")
     createEntry.attributes('-topmost', 'true')
     createEntry.focus()
+
+    for widgets in createEntry.winfo_children():
+        widgets.destroy()
 
     createEntry.grid_rowconfigure(6, weight=1)
     createEntry.grid_columnconfigure(1, weight=1)
@@ -17,7 +25,7 @@ def open_createEntry():
     createEntry.category = ctk.CTkLabel(createEntry, text=categoryText, height=12, width=12, text_color="white")
     createEntry.category.grid(row=0, column=1, padx=20, pady=20, sticky="nesw")
 
-    createEntry.categoryEntry = ctk.CTkComboBox(createEntry, values=[categoryGeneral, categoryWork, categoryPrivate])
+    createEntry.categoryEntry = ctk.CTkComboBox(createEntry, values=[categoryGeneral, categoryWork, categoryPrivate], state="readonly")
     createEntry.categoryEntry.grid(row=0, column=2, columnspan=2, padx=20, pady=20, sticky="ne")
 
     createEntry.lastname = ctk.CTkLabel(createEntry, text=lastnameText, height=12, width=12, text_color="white")
@@ -52,15 +60,25 @@ def open_createEntry():
 
 
     def save():
-        entry_list = [child for child in createEntry.winfo_children()
-                      if isinstance(child, ctk.CTkEntry)]
-        
-        for ctk.CTkEntry in entry_list:
-            if not ctk.CTkEntry.get():
-                print("empty")
-            else:
-                print(ctk.CTkEntry.get())
+        if not (createEntry.categoryEntry.get() and createEntry.lastnameEntry.get() and createEntry.firstnameEntry.get()):
+            messagebox.showerror('Error', errorText + "!", parent=createEntry)
+        else:
+            categoryInput = createEntry.categoryEntry.get()
+            lastnameInput = createEntry.lastnameEntry.get()
+            firstnameInput = createEntry.firstnameEntry.get()
+            emailInput = createEntry.emailEntry.get()
+            phoneInput = createEntry.phoneEntry.get()
+            addressInput = createEntry.addressEntry.get()
 
+            now = datetime.now()
+            date = now.strftime("%d/%m/%Y %H:%M:%S")
+
+            cursor.execute("INSERT INTO contacts (category, lastname, firstname, email, phone, address, date) VALUES (?, ?, ?, ?, ?, ?, ?)", (categoryInput,lastnameInput,firstnameInput,emailInput,phoneInput,addressInput,date))
+            connection.commit()
+            connection.close()
+
+            createEntry.destroy()
+                
 
     createEntry.closeButton = ctk.CTkButton(createEntry, text=closeText, height=12, width=12, text_color="white", command=createEntry.destroy)
     createEntry.closeButton.grid(row=6, column=2, padx=20, pady=20, sticky="ne")
