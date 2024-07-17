@@ -48,9 +48,12 @@ class overview(ctk.CTkFrame):
         self.settings = ctk.CTkButton(self, text="Settings", height=12, width=12, command=open_settings)
         self.settings.grid(row=1, column=2, padx=(10,20), pady=20, sticky="ne")
 
-        self.test = ctk.CTkLabel(self, text=testText, text_color="white")
-        self.test.grid(row=1, column=0, padx=20, pady=20)
+        # self.test = ctk.CTkLabel(self, text=testText, text_color="white")
+        # self.test.grid(row=1, column=0, padx=20, pady=20)
 
+        # self.sort = ctk.CTkOptionMenu(self, values=[categorySortAll, categoryGeneral, categoryWork, categoryPrivate])
+        # self.sort.grid(row=1, column=0, padx=20, pady=20)
+        # self.sort.set(categorySortAll)
         
         self.table_frame = table(master=self, height=500, width=500)
         self.table_frame.grid(row=3, column=0, columnspan=3, padx=20, pady=20, sticky="nsew")
@@ -59,37 +62,68 @@ class overview(ctk.CTkFrame):
 class table(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
+        self.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
 
-        cursor.execute("SELECT * FROM contacts")
-        contacts = cursor.fetchall()
+        def getOverview(choice):
+            for widget in self.winfo_children():
+                 if isinstance(widget, ctk.CTkLabel):
+                    widget.destroy()
 
-        self.header  = ctk.CTkLabel(self, text= categoryText + "\t\t" + lastnameText + "\t\t" + firstnameText + "\t\t" + emailText + "\t\t" + phoneText + "\t\t" + addressText + "\t\t" + dateText, text_color="white")
-        self.header.grid(row=0, column=0, sticky="nsew")
+            if not choice == categorySortAll :
+                overviewSort = """SELECT * FROM contacts WHERE category = ?;"""
+                cursor.execute(overviewSort, (choice,))
+            else:
+                overviewAll = """SELECT * FROM contacts;"""
+                cursor.execute(overviewAll)
 
-        # self.table = ctk.CTkTextbox(self, height=400, wrap="none")
-        # self.table.insert("0.0", categoryText + "\t\t" + lastnameText + "\t\t" + firstnameText + "\t\t" + emailText + "\t\t" + phoneText + "\t\t" + addressText + "\t\t" + dateText + "\n")
+            contacts = cursor.fetchall()
 
-        labels = {}
-        r = 0
+            header = [categoryText, lastnameText, firstnameText, emailText, phoneText, addressText, dateText]
 
-        for contact in contacts:
-            category = contact[0]
-            lastname = contact[1]
-            firstname = contact[2]
-            email = contact[3]
-            phone = contact[4]
-            address = contact[5]
-            date = contact[6]
-            labels[contact] = ctk.CTkLabel(self, text= f"{category}\t\t{lastname}\t\t{firstname}\t\t{email}\t\t{phone}\t\t{address}\t\t{date}\n")
-            labels[contact].grid(row=3 + r, column=0)
+            c = 0
 
-            r = r + 1
-            # self.table.insert("0.0", f"{category}\t\t{lastname}\t\t{firstname}\t\t{email}\t\t{phone}\t\t{address}\t\t{date}\n")
+            for index, value in enumerate(header):
+                self.header  = ctk.CTkLabel(self, text= value, text_color="white")
+                self.header.grid(row=1, column=0 + c, sticky="w")
 
-        # self.table.grid(row=3, column=0, columnspan=3, padx=20, pady=20, sticky="nsew")
-        # self.table.configure(state="disabled")
+                c = c + 1
 
-        connection.close()
+            labels = {}
+            r = 0
+
+            for contact in contacts:
+                category = contact[0]
+                lastname = contact[1]
+                firstname = contact[2]
+                email = contact[3]
+                phone = contact[4]
+                address = contact[5]
+                date = contact[6]
+                labels[contact] = ctk.CTkLabel(self, text= f"{category}")
+                labels[contact].grid(row=3 + r, column=0, sticky="w")
+                labels[contact] = ctk.CTkLabel(self, text= f"{lastname}")
+                labels[contact].grid(row=3 + r, column=1, sticky="w")
+                labels[contact] = ctk.CTkLabel(self, text= f"{firstname}")
+                labels[contact].grid(row=3 + r, column=2, sticky="w")
+                labels[contact] = ctk.CTkLabel(self, text= f"{email}")
+                labels[contact].grid(row=3 + r, column=3, sticky="w")
+                labels[contact] = ctk.CTkLabel(self, text= f"{phone}")
+                labels[contact].grid(row=3 + r, column=4, sticky="w")
+                labels[contact] = ctk.CTkLabel(self, text= f"{address}")
+                labels[contact].grid(row=3 + r, column=5, sticky="w")
+                labels[contact] = ctk.CTkLabel(self, text= f"{date}")
+                labels[contact].grid(row=3 + r, column=6, sticky="w")
+
+                r = r + 1
+
+
+        self.sort = ctk.CTkOptionMenu(self, values=[categorySortAll, categoryGeneral, categoryWork, categoryPrivate], command=getOverview)
+        self.sort.grid(row=0, column=6, padx=20, pady=20, sticky="e")
+        self.sort.set(categorySortAll)
+        
+        getOverview(categorySortAll)
+
 
 class settings(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
