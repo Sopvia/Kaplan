@@ -7,7 +7,9 @@ from datetime import datetime
 connection = sqlite3.connect("addressBook.db")
 cursor = connection.cursor()
 
+
 def open_createEntry():
+    
     createEntry = ctk.CTkToplevel(fg_color="black")
     createEntry.title("New Entry")
     createEntry.geometry("600x600")

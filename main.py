@@ -7,13 +7,14 @@ import sqlite3
 # ctk.set_default_color_theme("light-pink.json")
 # ctk.set_appearance_mode("light")
 
+language = "english"
+
 connection = sqlite3.connect("addressBook.db")
 cursor = connection.cursor()
 
 createTable = """CREATE TABLE IF NOT EXISTS contacts (category TEXT,lastname TEXT,firstname TEXT,email TEXT,phone INTEGER,address TEXT,date TEXT);"""
 cursor.execute(createTable)
 
-language = "english"
 
 class root(ctk.CTk):
     def __init__(self):
@@ -48,8 +49,8 @@ class overview(ctk.CTkFrame):
         self.settings = ctk.CTkButton(self, text="Settings", height=12, width=12, command=open_settings)
         self.settings.grid(row=1, column=2, padx=(10,20), pady=20, sticky="ne")
 
-        # self.test = ctk.CTkLabel(self, text=testText, text_color="white")
-        # self.test.grid(row=1, column=0, padx=20, pady=20)
+        self.test = ctk.CTkLabel(self, text=testText, text_color="white")
+        self.test.grid(row=1, column=0, padx=20, pady=20)
 
         # self.sort = ctk.CTkOptionMenu(self, values=[categorySortAll, categoryGeneral, categoryWork, categoryPrivate])
         # self.sort.grid(row=1, column=0, padx=20, pady=20)
@@ -62,6 +63,7 @@ class overview(ctk.CTkFrame):
 class table(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+
         self.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
         self.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
 
@@ -128,12 +130,20 @@ class table(ctk.CTkScrollableFrame):
 class settings(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs, fg_color="black", width=500, height=500)
+        
+        self.grid_columnconfigure(1, weight=0)
 
         self.language = ctk.CTkButton(self, text="De/En", height=12, width=12, command=switchLanguage)
-        self.language.grid(row=1, column=1, padx=20, pady=20, sticky="ne")
+        self.language.grid(row=1, column=1, padx=20, pady=(20,10), sticky="nesw")
+
+        self.mode = ctk.CTkButton(self, text="Dark/Light Mode", height=12, width=12)
+        self.mode.grid(row=2, column=1, padx=20, pady=10, sticky="nesw")
+
+        self.theme = ctk.CTkOptionMenu(self, values=["Default", "Pink"], height=12, width=12)
+        self.theme.grid(row=3, column=1, padx=20, pady=10, sticky="nesw")
 
         self.backButton = ctk.CTkButton(self, text="Close", height=12, width=12, command=self.destroy)
-        self.backButton.grid(row=2, column=1)
+        self.backButton.grid(row=4, column=1, padx=20, pady=(10,20))
 
 
 def open_settings():
@@ -143,6 +153,7 @@ def open_settings():
 
 def switchLanguage():
     global language
+    global categoryText
     global testText
     global lastnameText
 
@@ -152,9 +163,11 @@ def switchLanguage():
         language = "german"
 
     if language == "german":
+        categoryText = "Kategorie"
         testText = "willkommen"
         lastnameText = "Nachname"
     elif language == "english":
+        categoryText = "Category"
         testText = "welcome"
         lastnameText = "Lastname"
     
@@ -163,8 +176,7 @@ def switchLanguage():
 
 def update():
     root.overview_frame.test.configure(text=testText)
-    root.createEntry_frame.lastname.configure(text=lastnameText)
-
+    
 
 root = root()
 root.mainloop()
