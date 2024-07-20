@@ -1,5 +1,6 @@
 from tkinter import messagebox
 import customtkinter as ctk
+from init import *
 from createEntry import *
 from variables import *
 import sqlite3
@@ -10,12 +11,6 @@ ctk.set_appearance_mode("light")
 
 connection = sqlite3.connect("addressBook.db")
 cursor = connection.cursor()
-
-createTable = """CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY, category TEXT,lastname TEXT,firstname TEXT,email TEXT,phone INTEGER,address TEXT,date TEXT);"""
-cursor.execute(createTable)
-
-createSettingsTable = """CREATE TABLE IF NOT EXISTS settings (language TEXT, name TEXT);"""
-cursor.execute(createSettingsTable)
 
 getLang = """SELECT language FROM settings;"""
 cursor.execute(getLang)
