@@ -5,14 +5,17 @@ from variables import *
 import sqlite3
 from PIL import Image
 
-# ctk.set_default_color_theme("light-pink.json")
-# ctk.set_appearance_mode("light")
+ctk.set_default_color_theme("light-pink.json")
+ctk.set_appearance_mode("light")
 
 connection = sqlite3.connect("addressBook.db")
 cursor = connection.cursor()
 
 createTable = """CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY, category TEXT,lastname TEXT,firstname TEXT,email TEXT,phone INTEGER,address TEXT,date TEXT);"""
 cursor.execute(createTable)
+
+createSettingsTable = """CREATE TABLE IF NOT EXISTS settings (language TEXT, name TEXT);"""
+cursor.execute(createSettingsTable)
 
 getLang = """SELECT language FROM settings;"""
 cursor.execute(getLang)
@@ -30,15 +33,12 @@ else:
 
 class root(ctk.CTk):
     def __init__(self):
-        super().__init__(fg_color="white")
-        
+        super().__init__()
         self.title("Kaplan - Your Address Book")
         self.geometry("900x600")
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         # self.iconbitmap('icon.ico')
-
-        self.font = ctk.CTkFont(family="Georgia", size=12)
 
         self.overview_frame = overview(master=self)
         self.overview_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
@@ -46,9 +46,13 @@ class root(ctk.CTk):
 
 class overview(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs, fg_color="black", width=500, height=500)
+        super().__init__(master, **kwargs,fg_color=["#f5d9e5", "#444444"], width=500, height=500)
         for widgets in self.winfo_children():
             widgets.destroy()
+
+        getName = """SELECT name FROM settings;"""
+        cursor.execute(getName)
+        username = cursor.fetchone()
 
         self.grid_rowconfigure(1, weight=0)
         self.grid_rowconfigure(2, weight=1)
@@ -63,7 +67,7 @@ class overview(ctk.CTkFrame):
         self.settings = ctk.CTkButton(self, text=settingsText[var], height=12, width=12, command=open_settings)
         self.settings.grid(row=1, column=2, padx=(10,20), pady=20, sticky="ne")
 
-        self.test = ctk.CTkLabel(self, text=testText[var], text_color="white")
+        self.test = ctk.CTkLabel(self, text= f"{testText[var]}, {username[0]}!")
         self.test.grid(row=1, column=0, padx=20, pady=20)
         
         self.table_frame = table(master=self, height=500, width=500)
@@ -73,7 +77,6 @@ class overview(ctk.CTkFrame):
 class table(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-
         self.grid_columnconfigure((0,1,2,3,4,5,6), weight=1)
         self.grid_columnconfigure((7,8), weight=0)
         self.grid_rowconfigure((1,2,3,4,5,6), weight=1)
@@ -104,8 +107,8 @@ class table(ctk.CTkScrollableFrame):
             c = 0
 
             for index, value in enumerate(header):
-                self.header  = ctk.CTkLabel(self, text= value, text_color="white")
-                self.header.grid(row=1, column=0 + c, sticky="w")
+                self.header  = ctk.CTkLabel(self, text= value)
+                self.header.grid(row=1, column=0 + c, padx=10, pady=20, sticky="nsw")
 
                 c = c + 1
 
@@ -131,19 +134,19 @@ class table(ctk.CTkScrollableFrame):
                         category = categoryPrivate[1]
 
                 labels[contact] = ctk.CTkLabel(self, text= f"{category}")
-                labels[contact].grid(row=3 + r, column=0, sticky="w")
+                labels[contact].grid(row=3 + r, column=0, padx=10, pady=5, sticky="w")
                 labels[contact] = ctk.CTkLabel(self, text= f"{lastname}")
-                labels[contact].grid(row=3 + r, column=1, sticky="w")
+                labels[contact].grid(row=3 + r, column=1, padx=10, pady=5, sticky="w")
                 labels[contact] = ctk.CTkLabel(self, text= f"{firstname}")
-                labels[contact].grid(row=3 + r, column=2, sticky="w")
+                labels[contact].grid(row=3 + r, column=2, padx=10, pady=5, sticky="w")
                 labels[contact] = ctk.CTkLabel(self, text= f"{email}")
-                labels[contact].grid(row=3 + r, column=3, sticky="w")
+                labels[contact].grid(row=3 + r, column=3, padx=10, pady=5, sticky="w")
                 labels[contact] = ctk.CTkLabel(self, text= f"{phone}")
-                labels[contact].grid(row=3 + r, column=4, sticky="w")
+                labels[contact].grid(row=3 + r, column=4, padx=10, pady=5, sticky="w")
                 labels[contact] = ctk.CTkLabel(self, text= f"{address}")
-                labels[contact].grid(row=3 + r, column=5, sticky="w")
+                labels[contact].grid(row=3 + r, column=5, padx=10, pady=5, sticky="w")
                 labels[contact] = ctk.CTkLabel(self, text= f"{date}")
-                labels[contact].grid(row=3 + r, column=6, sticky="w")
+                labels[contact].grid(row=3 + r, column=6, padx=10, pady=5, sticky="w")
 
                 # edit = ctk.CTkButton(self, text="E", height=12, width=12)
                 # edit.grid(row=3 + r, column=7, padx=10, sticky="w")
@@ -170,14 +173,39 @@ class table(ctk.CTkScrollableFrame):
 
 class settings(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs, fg_color="black", width=500, height=500)
-        
+        super().__init__(master, **kwargs, width=500, height=500)
         self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure((2,3,4), weight=0)
+
+        getName = """SELECT name FROM settings;"""
+        cursor.execute(getName)
+        username = cursor.fetchone()
+
+        self.name = ctk.CTkLabel(self, text="Name", height=12, width=12)
+        self.name.grid(row=0, column=1, padx=(20, 10), pady=20, sticky="nesw")
+
+        if username[0] is not None:
+            self.currentName = ctk.CTkLabel(self, text=username, height=12, width=12)
+            self.currentName.grid(row=0, column=2, padx=10, pady=20, sticky="nesw")
+
+        self.nameEntry = ctk.CTkEntry(self)
+        self.nameEntry.grid(row=0, column=3, padx=10, pady=20, sticky="nsw")
+
+        self.saveNameEntry = ctk.CTkButton(self, text=saveText[var], height=12, width=12, command=saveName)
+        self.saveNameEntry.grid(row=0, column=4, padx=(10,20), pady=20, sticky="nsw")
 
         self.language = ctk.CTkButton(self, text="De/En", height=12, width=12, command=switchLanguage)
         self.language.grid(row=1, column=1, padx=20, pady=(20,10), sticky="nesw")
 
-        self.mode = ctk.CTkButton(self, text="Dark/Light Mode", height=12, width=12)
+        infoIcon = ctk.CTkImage(light_image=Image.open("icons/info.png"), dark_image=Image.open("icons/info.png"), size=(16, 16))
+
+        self.langInfoIcon = ctk.CTkLabel(self, image=infoIcon, text="", height=12, width=12)
+        self.langInfoIcon.grid(row=1, column=2, padx=(20, 10), pady=20, sticky="ne")
+
+        self.langInfo = ctk.CTkLabel(self, text=languageInfo[var], height=12, width=12)
+        self.langInfo.grid(row=1, column=3, padx=(10,20), pady=20, sticky="nw")
+
+        self.mode = ctk.CTkButton(self, text="Dark/Light Mode", height=12, width=12, command=switchMode)
         self.mode.grid(row=2, column=1, padx=20, pady=10, sticky="nesw")
 
         self.theme = ctk.CTkOptionMenu(self, values=["Default", "Pink"], height=12, width=12)
@@ -191,6 +219,7 @@ def open_settings():
     root.settings_frame = settings(master=root)
     root.settings_frame.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
+
 def open_restart():
     restart_win = ctk.CTkToplevel()
     restart_win.title("Info")
@@ -198,6 +227,8 @@ def open_restart():
     restart_win.attributes('-topmost', 'true')
     restart_win.focus()
     restart_win.grab_set() 
+
+    restart_win.grid_columnconfigure(1, weight=1)
 
     restart_win.info = ctk.CTkLabel(restart_win, text=restartInfo[var], height=12, width=12)
     restart_win.info.grid(row=0, column=1, padx=20, pady=20, sticky="nesw")
@@ -220,7 +251,22 @@ def switchLanguage():
 
 def delete(x):
     cursor.execute("DELETE FROM contacts WHERE id= ?", (x,))
-    connection.commit()    
+    connection.commit()
+
+
+def saveName():
+        y = root.settings_frame.nameEntry.get()
+        cursor.execute("""UPDATE settings SET name = ?""", (y,))
+        connection.commit()
+
+        root.settings_frame.destroy()
+
+
+
+
+def switchMode():
+    ctk.set_appearance_mode("dark")
+
 
 root = root()
 root.mainloop()

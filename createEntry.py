@@ -22,7 +22,7 @@ else:
 
 
 def open_createEntry():
-    createEntry = ctk.CTkToplevel(fg_color="black")
+    createEntry = ctk.CTkToplevel()
     createEntry.title("New Entry")
     createEntry.geometry("600x600")
     createEntry.attributes('-topmost', 'true')
@@ -36,41 +36,41 @@ def open_createEntry():
     createEntry.grid_columnconfigure(2, weight=2)
 
 
-    createEntry.category = ctk.CTkLabel(createEntry, text=categoryText[var], height=12, width=12, text_color="white")
-    createEntry.category.grid(row=0, column=1, padx=20, pady=20, sticky="nesw")
+    createEntry.category = ctk.CTkLabel(createEntry, text=categoryText[var], height=12, width=12)
+    createEntry.category.grid(row=0, column=1, padx=20, pady=20, sticky="nsw")
 
     createEntry.categoryEntry = ctk.CTkComboBox(createEntry, values=[categoryGeneral[var], categoryWork[var], categoryPrivate[var]], state="readonly")
-    createEntry.categoryEntry.grid(row=0, column=2, columnspan=2, padx=20, pady=20, sticky="ne")
+    createEntry.categoryEntry.grid(row=0, column=2, columnspan=2, padx=20, pady=20, sticky="nw")
 
-    createEntry.lastname = ctk.CTkLabel(createEntry, text=lastnameText[var], height=12, width=12, text_color="white")
-    createEntry.lastname.grid(row=1, column=1, padx=20, pady=20, sticky="nesw")
+    createEntry.lastname = ctk.CTkLabel(createEntry, text=lastnameText[var], height=12, width=12)
+    createEntry.lastname.grid(row=1, column=1, padx=20, pady=20, sticky="nsw")
 
     createEntry.lastnameEntry = ctk.CTkEntry(createEntry)
-    createEntry.lastnameEntry.grid(row=1, column=2, columnspan=2, padx=20, pady=20, sticky="ne")
+    createEntry.lastnameEntry.grid(row=1, column=2, columnspan=2, padx=20, pady=20, sticky="nw")
 
-    createEntry.firstname = ctk.CTkLabel(createEntry, text=firstnameText[var], height=12, width=12, text_color="white")
-    createEntry.firstname.grid(row=2, column=1, padx=20, pady=20, sticky="nesw")
+    createEntry.firstname = ctk.CTkLabel(createEntry, text=firstnameText[var], height=12, width=12)
+    createEntry.firstname.grid(row=2, column=1, padx=20, pady=20, sticky="nsw")
 
     createEntry.firstnameEntry = ctk.CTkEntry(createEntry)
-    createEntry.firstnameEntry.grid(row=2, column=2, columnspan=2, padx=20, pady=20, sticky="ne")
+    createEntry.firstnameEntry.grid(row=2, column=2, columnspan=2, padx=20, pady=20, sticky="nw")
 
-    createEntry.email = ctk.CTkLabel(createEntry, text=emailText, height=12, width=12, text_color="white")
-    createEntry.email.grid(row=3, column=1, padx=20, pady=20, sticky="nesw")
+    createEntry.email = ctk.CTkLabel(createEntry, text=emailText, height=12, width=12)
+    createEntry.email.grid(row=3, column=1, padx=20, pady=20, sticky="nsw")
 
     createEntry.emailEntry = ctk.CTkEntry(createEntry)
-    createEntry.emailEntry.grid(row=3, column=2, columnspan=2, padx=20, pady=20, sticky="ne")
+    createEntry.emailEntry.grid(row=3, column=2, columnspan=2, padx=20, pady=20, sticky="nw")
 
-    createEntry.phone = ctk.CTkLabel(createEntry, text=phoneText[var], height=12, width=12, text_color="white")
-    createEntry.phone.grid(row=4, column=1, padx=20, pady=20, sticky="nesw")
+    createEntry.phone = ctk.CTkLabel(createEntry, text=phoneText[var], height=12, width=12)
+    createEntry.phone.grid(row=4, column=1, padx=20, pady=20, sticky="nsw")
 
     createEntry.phoneEntry = ctk.CTkEntry(createEntry)
-    createEntry.phoneEntry.grid(row=4, column=2, columnspan=2, padx=20, pady=20, sticky="ne")
+    createEntry.phoneEntry.grid(row=4, column=2, columnspan=2, padx=20, pady=20, sticky="nw")
 
-    createEntry.address = ctk.CTkLabel(createEntry, text=addressText[var], height=12, width=12, text_color="white")
-    createEntry.address.grid(row=5, column=1, padx=20, pady=20, sticky="nesw")
+    createEntry.address = ctk.CTkLabel(createEntry, text=addressText[var], height=12, width=12)
+    createEntry.address.grid(row=5, column=1, padx=20, pady=20, sticky="nsw")
 
     createEntry.addressEntry = ctk.CTkEntry(createEntry)
-    createEntry.addressEntry.grid(row=5, column=2, columnspan=2, padx=20, pady=20, sticky="ne")
+    createEntry.addressEntry.grid(row=5, column=2, columnspan=2, padx=20, pady=20, sticky="nw")
 
 
     def save():
@@ -101,8 +101,8 @@ def open_createEntry():
             createEntry.destroy()
                 
 
-    createEntry.closeButton = ctk.CTkButton(createEntry, text=closeText[var], height=12, width=12, text_color="white", command=createEntry.destroy)
-    createEntry.closeButton.grid(row=6, column=2, padx=20, pady=20, sticky="ne")
+    createEntry.closeButton = ctk.CTkButton(createEntry, text=closeText[var], height=12, width=12, command=createEntry.destroy)
+    createEntry.closeButton.grid(row=6, column=1, padx=(20,10), pady=20, sticky="ne")
 
-    createEntry.saveButton = ctk.CTkButton(createEntry, text=saveText[var], height=12, width=12, text_color="white", command=save)
-    createEntry.saveButton.grid(row=6, column=3, padx=20, pady=20, sticky="ne")
+    createEntry.saveButton = ctk.CTkButton(createEntry, text=saveText[var], height=12, width=12, command=save)
+    createEntry.saveButton.grid(row=6, column=2, padx=(10,20), pady=20, sticky="nw")
