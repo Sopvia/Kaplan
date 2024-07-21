@@ -13,12 +13,12 @@
     "border_color": ["#000000", "#ffffff"]
   },
   "CTkButton": {
-    "corner_radius": 6,
-    "border_width": 0,
-    "fg_color": ["#edcad7", "#edcad8"],
-    "hover_color": ["#edcad8", "#edcad9"],
-    "border_color": ["#000000", "#ffffff"],
-    "text_color": ["#000000", "#ffffff"],
+    "corner_radius": 4,
+    "border_width": 2,
+    "fg_color": ["#ffffff", "#edcad7"],
+    "hover_color": ["#e6b7c8", "#e6b7c8"],
+    "border_color": ["#edcad7", "#e6b7c8"],
+    "text_color": ["#edcad7", "#000000"],
     "text_color_disabled": ["#eeeeee", "#eeeeee"]
   },
   "CTkLabel": {
@@ -27,16 +27,16 @@
     "text_color": ["#000000", "#ffffff"]
   },
   "CTkEntry": {
-    "corner_radius": 6,
+    "corner_radius": 4,
     "border_width": 2,
-    "fg_color": ["#F9F9FA", "#343638"],
-    "border_color": ["#979DA2", "#565B5E"],
-    "text_color": ["gray14", "gray84"],
-    "placeholder_text_color": ["gray52", "gray62"]
+    "fg_color": ["#ffffff", "#edcad7"],
+    "border_color": ["#edcad7", "#edcad8"],
+    "text_color": ["#000000", "#000000"],
+    "placeholder_text_color": ["#000000", "#000000"]
   },
   "CTkCheckBox": {
-    "corner_radius": 6,
-    "border_width": 3,
+    "corner_radius": 4,
+    "border_width": 2,
     "fg_color": ["#3a7ebf", "#1f538d"],
     "border_color": ["#3E454A", "#949A9F"],
     "hover_color": ["#325882", "#14375e"],
@@ -83,21 +83,21 @@
     "button_hover_color": ["#325882", "#14375e"]
   },
   "CTkOptionMenu": {
-    "corner_radius": 6,
-    "fg_color": ["#ffffff", "#000000"],
-    "button_color": ["#edcad7", "#edcad7"],
+    "corner_radius": 4,
+    "fg_color": ["#ffffff", "#edcad7"],
+    "button_color": ["#ffffff", "#edcad7"],
     "button_hover_color": ["#e6b7c8", "#e6b7c8"],
-    "text_color": ["#000000", "#ffffff"],
+    "text_color": ["#edcad7", "#000000"],
     "text_color_disabled": ["#eeeeee", "#eeeeee"]
   },
   "CTkComboBox": {
-    "corner_radius": 6,
+    "corner_radius": 4,
     "border_width": 2,
-    "fg_color": ["#ffffff", "#000000"],
-    "border_color": ["#ffffff", "#000000"],
-    "button_color": ["#edcad7", "#edcad7"],
+    "fg_color": ["#ffffff", "#edcad7"],
+    "border_color": ["#edcad7", "#e6b7c8"],
+    "button_color": ["#ffffff", "#edcad7"],
     "button_hover_color": ["#e6b7c8", "#e6b7c8"],
-    "text_color": ["#000000", "#ffffff"],
+    "text_color": ["#edcad7", "#000000"],
     "text_color_disabled": ["#eeeeee", "#eeeeee"]
   },
   "CTkScrollbar": {

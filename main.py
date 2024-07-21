@@ -30,7 +30,7 @@ class root(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Kaplan - Your Address Book")
-        self.geometry("900x600")
+        self.geometry("1000x600")
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         # self.iconbitmap('icon.ico')
@@ -57,13 +57,16 @@ class overview(ctk.CTkFrame):
         self.grid_columnconfigure(2, weight=0)
 
         self.newEntry = ctk.CTkButton(self, text="+", height=12, width=12, command=open_createEntry)
-        self.newEntry.grid(row=1, column=1, padx=(20,10), pady=20, sticky="ne")
+        self.newEntry.grid(row=1, column=1, padx=(20,10), pady=20, ipadx=10, ipady=2, sticky="ne")
 
         self.settings = ctk.CTkButton(self, text=settingsText[var], height=12, width=12, command=open_settings)
-        self.settings.grid(row=1, column=2, padx=(10,20), pady=20, sticky="ne")
+        self.settings.grid(row=1, column=2, padx=(10,20), pady=20, ipadx=10, ipady=2, sticky="ne")
 
-        self.test = ctk.CTkLabel(self, text= f"{testText[var]}, {username[0]}!")
-        self.test.grid(row=1, column=0, padx=20, pady=20)
+        self.intro = ctk.CTkLabel(self, text= f"{introText[var]}!")
+        self.intro.grid(row=1, column=0, padx=20, pady=20)
+
+        if username[0]:
+            self.intro.configure(text= f"{introText[var]}, {username[0]}!")
         
         self.table_frame = table(master=self, height=500, width=500)
         self.table_frame.grid(row=3, column=0, columnspan=3, padx=20, pady=20, sticky="nsew")
@@ -103,7 +106,7 @@ class table(ctk.CTkScrollableFrame):
 
             for index, value in enumerate(header):
                 self.header  = ctk.CTkLabel(self, text= value)
-                self.header.grid(row=1, column=0 + c, padx=10, pady=20, sticky="nsw")
+                self.header.grid(row=0, column=0 + c, padx=10, pady=20, sticky="nsw")
 
                 c = c + 1
 
@@ -149,7 +152,7 @@ class table(ctk.CTkScrollableFrame):
                 deleteIcon = ctk.CTkImage(light_image=Image.open("icons/delete.png"), dark_image=Image.open("icons/delete.png"), size=(16, 16))
 
                 deleteButton = ctk.CTkButton(self, image=deleteIcon, text="", height=12, width=12, command=lambda: delete(id))
-                deleteButton.grid(row=3 + r, column=8, padx=10, sticky="w")
+                deleteButton.grid(row=3 + r, column=8, padx=10, ipadx=10, ipady=2, sticky="e")
 
                 r = r + 1
 
@@ -157,11 +160,15 @@ class table(ctk.CTkScrollableFrame):
             refreshIcon = ctk.CTkImage(light_image=Image.open("icons/retry.png"), dark_image=Image.open("icons/retry.png"), size=(16, 16))
 
             self.refresh = ctk.CTkButton(self, image=refreshIcon, text="", command=lambda: getOverview(categorySortAll[0]), height=12, width=12)
-            self.refresh.grid(row=0, column=7, padx=10, pady=20, sticky="e")
+            self.refresh.grid(row=0, column=8, padx=10, pady=20, ipadx=10, ipady=2, sticky="e")
 
             self.sort = ctk.CTkOptionMenu(self, values=[categorySortAll[var], categoryGeneral[var], categoryWork[var], categoryPrivate[var]], command=getOverview, width=40)
-            self.sort.grid(row=0, column=8, padx=10, pady=20, sticky="w")
+            self.sort.grid(row=0, column=9, padx=10, pady=20, ipadx=10, ipady=2, sticky="w")
             self.sort.set(categorySortAll[var])
+
+            # self.order = ctk.CTkOptionMenu(self, values=[orderDateDESC[var], orderDateASC[var], orderLastnameDESC[var], orderLastnameASC[var]], command=getOverview, width=40)
+            # self.order.grid(row=0, column=10, padx=10, pady=20, sticky="w")
+            # self.order.set(orderDateDESC[var])
         
         getOverview(categorySortAll[var])
 
@@ -187,10 +194,10 @@ class settings(ctk.CTkFrame):
         self.nameEntry.grid(row=0, column=3, padx=10, pady=20, sticky="nsw")
 
         self.saveNameEntry = ctk.CTkButton(self, text=saveText[var], height=12, width=12, command=saveName)
-        self.saveNameEntry.grid(row=0, column=4, padx=(10,20), pady=20, sticky="nsw")
+        self.saveNameEntry.grid(row=0, column=4, padx=(10,20), pady=20, ipadx=10, ipady=2, sticky="nsw")
 
         self.language = ctk.CTkButton(self, text="De/En", height=12, width=12, command=switchLanguage)
-        self.language.grid(row=1, column=1, padx=20, pady=(20,10), sticky="nesw")
+        self.language.grid(row=1, column=1, padx=20, pady=(20,10), ipadx=10, ipady=2, sticky="nesw")
 
         infoIcon = ctk.CTkImage(light_image=Image.open("icons/info.png"), dark_image=Image.open("icons/info.png"), size=(16, 16))
 
@@ -201,13 +208,13 @@ class settings(ctk.CTkFrame):
         self.langInfo.grid(row=1, column=3, padx=(10,20), pady=20, sticky="nw")
 
         self.mode = ctk.CTkButton(self, text="Dark/Light Mode", height=12, width=12, command=switchMode)
-        self.mode.grid(row=2, column=1, padx=20, pady=10, sticky="nesw")
+        self.mode.grid(row=2, column=1, padx=20, pady=10, ipadx=10, ipady=2, sticky="nesw")
 
         self.theme = ctk.CTkOptionMenu(self, values=["Default", "Pink"], height=12, width=12)
-        self.theme.grid(row=3, column=1, padx=20, pady=10, sticky="nesw")
+        self.theme.grid(row=3, column=1, padx=20, pady=10, ipadx=10, ipady=2, sticky="nesw")
 
         self.backButton = ctk.CTkButton(self, text=closeText[var], height=12, width=12, command=self.destroy)
-        self.backButton.grid(row=4, column=1, padx=20, pady=(10,20))
+        self.backButton.grid(row=4, column=1, padx=20, ipadx=10, ipady=2, pady=(10,20))
 
 
 def open_settings():
@@ -229,7 +236,7 @@ def open_restart():
     restart_win.info.grid(row=0, column=1, padx=20, pady=20, sticky="nesw")
 
     restart_win.ok = ctk.CTkButton(restart_win, text="Ok", height=12, width=12, command=root.destroy)
-    restart_win.ok.grid(row=1, column=1, padx=20, pady=20, sticky="nesw")
+    restart_win.ok.grid(row=1, column=1, padx=20, pady=20, ipadx=10, ipady=2, sticky="nesw")
 
 
 def switchLanguage():
@@ -255,8 +262,6 @@ def saveName():
         connection.commit()
 
         root.settings_frame.destroy()
-
-
 
 
 def switchMode():

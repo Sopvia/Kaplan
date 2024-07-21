@@ -40,7 +40,7 @@ def open_createEntry():
     createEntry.category.grid(row=0, column=1, padx=20, pady=20, sticky="nsw")
 
     createEntry.categoryEntry = ctk.CTkComboBox(createEntry, values=[categoryGeneral[var], categoryWork[var], categoryPrivate[var]], state="readonly")
-    createEntry.categoryEntry.grid(row=0, column=2, columnspan=2, padx=20, pady=20, sticky="nw")
+    createEntry.categoryEntry.grid(row=0, column=2, columnspan=2, padx=20, pady=20, ipadx=10, ipady=2, sticky="nw")
 
     createEntry.lastname = ctk.CTkLabel(createEntry, text=lastnameText[var], height=12, width=12)
     createEntry.lastname.grid(row=1, column=1, padx=20, pady=20, sticky="nsw")
@@ -77,12 +77,12 @@ def open_createEntry():
         if not ((createEntry.categoryEntry.get() and createEntry.lastnameEntry.get() and createEntry.firstnameEntry.get())):
             messagebox.showerror('Error', errorText + "!", parent=createEntry)
         else:
-            category = createEntry.categoryEntry.get()
-            if category == categoryGeneral[1]:
+            categoryInput = createEntry.categoryEntry.get()
+            if categoryInput == categoryGeneral[1]:
                 categoryInput = categoryGeneral[0]
-            elif category == categoryWork[1]:
+            elif categoryInput == categoryWork[1]:
                 categoryInput = categoryWork[0]
-            elif category == categoryPrivate[1]:
+            elif categoryInput == categoryPrivate[1]:
                 categoryInput = categoryPrivate[0]
                 
             lastnameInput = createEntry.lastnameEntry.get()
@@ -102,7 +102,7 @@ def open_createEntry():
                 
 
     createEntry.closeButton = ctk.CTkButton(createEntry, text=closeText[var], height=12, width=12, command=createEntry.destroy)
-    createEntry.closeButton.grid(row=6, column=1, padx=(20,10), pady=20, sticky="ne")
+    createEntry.closeButton.grid(row=6, column=1, padx=(20,10), pady=20, ipadx=10, ipady=2, sticky="ne")
 
     createEntry.saveButton = ctk.CTkButton(createEntry, text=saveText[var], height=12, width=12, command=save)
-    createEntry.saveButton.grid(row=6, column=2, padx=(10,20), pady=20, sticky="nw")
+    createEntry.saveButton.grid(row=6, column=2, padx=(10,20), pady=20, ipadx=10, ipady=2, sticky="nw")
