@@ -85,7 +85,7 @@ class table(ctk.CTkScrollableFrame):
                 widgets.destroy()
 
             if choice == categorySortAll[0] or choice == categorySortAll[1]:
-                overviewAll = """SELECT * FROM contacts;"""
+                overviewAll = """SELECT * FROM contacts ORDER BY date DESC;"""
                 cursor.execute(overviewAll)
             else:
                 if choice == categoryGeneral[0] or choice == categoryGeneral[1]:
@@ -95,7 +95,7 @@ class table(ctk.CTkScrollableFrame):
                 elif choice == categoryPrivate[0] or choice == categoryPrivate[1]:
                     cat = categoryPrivate[0]
 
-                overviewSort = """SELECT * FROM contacts WHERE category = ?;"""
+                overviewSort = """SELECT * FROM contacts WHERE category = ? ORDER BY date DESC;"""
                 cursor.execute(overviewSort, (cat,))
 
             contacts = cursor.fetchall()
