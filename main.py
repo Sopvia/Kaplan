@@ -16,7 +16,7 @@ getLang = """SELECT language FROM settings;"""
 cursor.execute(getLang)
 language = cursor.fetchone()
 
-if language == None:
+if language[0] == None:
     cursor.execute("INSERT INTO settings (language) VALUES (?)", ("english",))
     connection.commit()
 
