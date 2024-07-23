@@ -7,6 +7,6 @@ createTable = """CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY, ca
 cursor.execute(createTable)
 connection.commit()
 
-createSettingsTable = """CREATE TABLE IF NOT EXISTS settings (language TEXT, name TEXT);"""
+createSettingsTable = """CREATE TABLE IF NOT EXISTS settings (language TEXT, name TEXT, mode TEXT, theme TEXT);"""
 cursor.execute(createSettingsTable)
 connection.commit()

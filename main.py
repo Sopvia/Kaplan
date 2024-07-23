@@ -6,9 +6,6 @@ from variables import *
 import sqlite3
 from PIL import Image
 
-ctk.set_default_color_theme("light-pink.json")
-ctk.set_appearance_mode("light")
-
 connection = sqlite3.connect("addressBook.db")
 cursor = connection.cursor()
 
@@ -24,6 +21,24 @@ if language[0] == "german":
     var = 1
 else:
     var = 0
+
+getMode = """SELECT mode FROM settings;"""
+cursor.execute(getMode)
+mode = cursor.fetchone()
+
+if mode[0] == "dark":
+    ctk.set_appearance_mode("dark")
+else:
+    ctk.set_appearance_mode("light")
+
+getTheme = """SELECT theme FROM settings;"""
+cursor.execute(getTheme)
+theme = cursor.fetchone()
+
+if theme[0] == "blue":
+    ctk.set_default_color_theme("blue.json")
+else:
+    ctk.set_default_color_theme("light-pink.json")
 
 
 class root(ctk.CTk):
@@ -177,7 +192,7 @@ class settings(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs, width=500, height=500)
         self.grid_columnconfigure(1, weight=0)
-        self.grid_columnconfigure((2,3,4), weight=0)
+        self.grid_columnconfigure((2,3,4), weight=1)
 
         getName = """SELECT name FROM settings;"""
         cursor.execute(getName)
@@ -187,30 +202,29 @@ class settings(ctk.CTkFrame):
         self.name.grid(row=0, column=1, padx=(20, 10), pady=20, sticky="nesw")
 
         if username[0] is not None:
-            self.currentName = ctk.CTkLabel(self, text=username, height=12, width=12)
-            self.currentName.grid(row=0, column=2, padx=10, pady=20, sticky="nesw")
+            current_name = username[0]
 
-        self.nameEntry = ctk.CTkEntry(self)
-        self.nameEntry.grid(row=0, column=3, padx=10, pady=20, sticky="nsw")
+        self.nameEntry = ctk.CTkEntry(self, placeholder_text=current_name)
+        self.nameEntry.grid(row=0, column=2, padx=10, pady=20, sticky="nsw")
 
         self.saveNameEntry = ctk.CTkButton(self, text=saveText[var], height=12, width=12, command=saveName)
-        self.saveNameEntry.grid(row=0, column=4, padx=(10,20), pady=20, ipadx=10, ipady=2, sticky="nsw")
+        self.saveNameEntry.grid(row=0, column=4, padx=(10,20), pady=20, ipadx=10, ipady=2, sticky="nes")
 
         self.language = ctk.CTkButton(self, text="De/En", height=12, width=12, command=switchLanguage)
         self.language.grid(row=1, column=1, padx=20, pady=(20,10), ipadx=10, ipady=2, sticky="nesw")
 
-        infoIcon = ctk.CTkImage(light_image=Image.open("icons/info.png"), dark_image=Image.open("icons/info.png"), size=(16, 16))
+        # infoIcon = ctk.CTkImage(light_image=Image.open("icons/info.png"), dark_image=Image.open("icons/info.png"), size=(16, 16))
 
-        self.langInfoIcon = ctk.CTkLabel(self, image=infoIcon, text="", height=12, width=12)
-        self.langInfoIcon.grid(row=1, column=2, padx=(20, 10), pady=20, sticky="ne")
+        # self.langInfoIcon = ctk.CTkLabel(self, image=infoIcon, text="", height=12, width=12)
+        # self.langInfoIcon.grid(row=1, column=2, padx=(20, 10), pady=20, sticky="nsw")
 
-        self.langInfo = ctk.CTkLabel(self, text=languageInfo[var], height=12, width=12)
-        self.langInfo.grid(row=1, column=3, padx=(10,20), pady=20, sticky="nw")
+        # self.langInfo = ctk.CTkLabel(self, text=languageInfo[var], height=12, width=12)
+        # self.langInfo.grid(row=1, column=2, padx=(10,20), pady=20, sticky="nes")
 
         self.mode = ctk.CTkButton(self, text="Dark/Light Mode", height=12, width=12, command=switchMode)
         self.mode.grid(row=2, column=1, padx=20, pady=10, ipadx=10, ipady=2, sticky="nesw")
 
-        self.theme = ctk.CTkOptionMenu(self, values=["Default", "Pink"], height=12, width=12)
+        self.theme = ctk.CTkOptionMenu(self, values=["Pink", "Blue"], height=12, width=12, command=changeTheme, state="disabled")
         self.theme.grid(row=3, column=1, padx=20, pady=10, ipadx=10, ipady=2, sticky="nesw")
 
         self.backButton = ctk.CTkButton(self, text=closeText[var], height=12, width=12, command=self.destroy)
@@ -265,7 +279,31 @@ def saveName():
 
 
 def switchMode():
-    ctk.set_appearance_mode("dark")
+    getMode = """SELECT mode FROM settings;"""
+    cursor.execute(getMode)
+    mode = cursor.fetchone()
+
+    if mode[0] == "dark":
+        mde = "light"
+        ctk.set_appearance_mode("light")
+    else:
+        mde = "dark"
+        ctk.set_appearance_mode("dark")
+
+    cursor.execute("UPDATE settings SET mode = ?", (mde,))
+    connection.commit()
+
+
+def changeTheme(choice):
+    match choice:
+        case "Blue":
+            thm = "blue"
+        case "Pink":
+            thm = "pink"
+
+    cursor.execute("UPDATE settings SET theme = ?", (thm,))
+    connection.commit()
+
 
 
 root = root()
