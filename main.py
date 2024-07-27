@@ -68,12 +68,12 @@ class overview(ctk.CTkFrame):
         username = cursor.fetchone()
 
         self.grid_rowconfigure((1,3), weight=3)
-        self.grid_rowconfigure((2,3), weight=1)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure(2, weight=3)
+        self.grid_rowconfigure((2), weight=0)
+        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(2, weight=1)
 
         self.intro = ctk.CTkLabel(self, text= f"{introText[var]}!")
-        self.intro.grid(row=1, column=1, padx=(20,10), pady=(20, 10), sticky="nesw")
+        self.intro.grid(row=1, column=1, padx=(20,10), pady=(20, 10), sticky="esw")
 
         if username[0]:
             self.intro.configure(text= f"{introText[var]}, {username[0]}!")
@@ -126,11 +126,13 @@ class table(ctk.CTkTabview):
         # self.order.set(orderDateDESC[var])
 
 
+refreshIcon= ctk.CTkImage(light_image=Image.open("icons/retry.png"), dark_image=Image.open("icons/retry.png"), size=(16, 16))
+
+
 class createTableAll(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs, border_width=0)
-        for widgets in self.winfo_children():
-            widgets.destroy()
+        
         getOverview(self, categorySortAll[0])
 
 
@@ -159,6 +161,9 @@ class createTablePrivate(ctk.CTkScrollableFrame):
 
 
 def getOverview(master, choice):
+    for widgets in master.winfo_children():
+        widgets.destroy()
+
     master.grid_columnconfigure((0,1,2,3), weight=2)
     master.grid_columnconfigure(4, weight=1)
 
@@ -216,9 +221,12 @@ def getOverview(master, choice):
         labels[contact].grid(row=3 + r, column=3, padx=10, pady=5, sticky="nsw")
 
         showEntry = ctk.CTkButton(master, text=moreText[var], height=12, width=12, command=lambda id=entry_id: openDetails(id))
-        showEntry.grid(row=3 + r, column=4, padx=10, pady=10, ipadx=10, ipady=2, sticky="nsw")
+        showEntry.grid(row=3 + r, column=4, padx=(10,20), pady=5, ipadx=10, ipady=2, sticky="nesw")
 
         r = r + 1
+
+    master.refreshButton = ctk.CTkButton(master, image=refreshIcon, text="", height=12, width=12, command=lambda: getOverview(master, choice))
+    master.refreshButton.grid(row=0, column=4, padx=(10,20), pady=(20,10), ipadx=10, ipady=2, sticky="ne")
 
 
 
@@ -336,11 +344,11 @@ def changeTheme(choice):
 
 def openDetails(x):
     openEntry = ctk.CTkToplevel()
-    openEntry.geometry("300x400")
+    openEntry.geometry("350x450")
     openEntry.attributes('-topmost', 'true')
     openEntry.focus()
 
-    openEntry.grid_rowconfigure((1,2,3,4,5), weight=0)
+    openEntry.grid_rowconfigure((1,2,3,4,5,7,8), weight=0)
     openEntry.grid_columnconfigure(1, weight=1)
     openEntry.grid_columnconfigure(2, weight=2)
     
@@ -362,49 +370,57 @@ def openDetails(x):
 
     openEntry.title(f"{lastname}, {firstname}")
 
-    openEntry.categoryLabel = ctk.CTkLabel(openEntry, text=categoryText[var])
-    openEntry.categoryLabel.grid(row=1, column=1, padx=(20,10), pady=(20,10), sticky="nw")
 
-    openEntry.lastnameLabel = ctk.CTkLabel(openEntry, text=lastnameText[var])
-    openEntry.lastnameLabel.grid(row=2, column=1, padx=(20,10), pady=(10,10), sticky="nw")
+    titles = [categoryText[var], lastnameText[var], firstnameText[var], emailText, phoneText[var], addressText[var], dateText[var]]
 
-    openEntry.phoneLabel = ctk.CTkLabel(openEntry, text=phoneText[var])
-    openEntry.phoneLabel.grid(row=3, column=1, padx=(20,10), pady=(10,10), sticky="nw")
+    r = 0
 
-    openEntry.addressLabel = ctk.CTkLabel(openEntry, text=addressText[var])
-    openEntry.addressLabel.grid(row=4, column=1, padx=(20,10), pady=(10,10), sticky="nw")
+    for index, value in enumerate(titles):
+        openEntry.title  = ctk.CTkLabel(openEntry, text= value)
 
-    openEntry.dateLabel = ctk.CTkLabel(openEntry, text=dateText[var])
-    openEntry.dateLabel.grid(row=5, column=1, padx=(20,10), pady=(10,20), sticky="nw")
+        if index == 0:
+            openEntry.title.grid(row=1 + r, column=1, padx=(20,10), pady=(20,10), sticky="nw")
+        elif index == 6:
+            openEntry.title.grid(row=1 + r, column=1, padx=(20,10), pady=(10,20), sticky="nw")
+        else:
+            openEntry.title.grid(row=1 + r, column=1, padx=(20,10), pady=10, sticky="nw")
 
-    openEntry.categoryEntry = ctk.CTkLabel(openEntry, text= f"{category}")
+        r = r + 1
+
+    openEntry.categoryEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{category}")
     openEntry.categoryEntry.grid(row=1, column=2, padx=(10,20), pady=(20,10), sticky="nw")
 
-    openEntry.categoryEntry = ctk.CTkLabel(openEntry, text= f"{email}")
-    openEntry.categoryEntry.grid(row=2, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+    openEntry.lastnameEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{lastname}")
+    openEntry.lastnameEntry.grid(row=2, column=2, padx=(10,20), pady=(10,10), sticky="nw")
 
-    openEntry.categoryEntry = ctk.CTkLabel(openEntry, text= f"{phone}")
-    openEntry.categoryEntry.grid(row=3, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+    openEntry.firstnameEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{firstname}")
+    openEntry.firstnameEntry.grid(row=3, column=2, padx=(10,20), pady=(10,10), sticky="nw")
 
-    openEntry.categoryEntry = ctk.CTkLabel(openEntry, text= f"{address}")
-    openEntry.categoryEntry.grid(row=4, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+    openEntry.emailEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{email}")
+    openEntry.emailEntry.grid(row=4, column=2, padx=(10,20), pady=(10,10), sticky="nw")
 
-    openEntry.categoryEntry = ctk.CTkLabel(openEntry, text= f"{date}")
-    openEntry.categoryEntry.grid(row=5, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+    openEntry.phoneEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{phone}")
+    openEntry.phoneEntry.grid(row=5, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+
+    openEntry.phoneEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{address}")
+    openEntry.phoneEntry.grid(row=6, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+
+    openEntry.categoryEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{date}")
+    openEntry.categoryEntry.grid(row=7, column=2, padx=(10,20), pady=(10,10), sticky="nw")
 
     openEntry.backButton = ctk.CTkButton(openEntry, text=closeText[var], height=12, width=12, command=openEntry.destroy)
-    openEntry.backButton.grid(row=6, column=1, padx=(20,10), pady=(10,20), ipadx=10, ipady=2, sticky="nesw")
+    openEntry.backButton.grid(row=8, column=1, padx=(20,10), pady=(10,20), ipadx=10, ipady=2, sticky="nesw")
 
     def delete(x):
         cursor.execute("DELETE FROM contacts WHERE id= ?", (x,))
         connection.commit()
 
-        openEntry.destroy
+        openEntry.destroy()
 
     deleteIcon = ctk.CTkImage(light_image=Image.open("icons/delete.png"), dark_image=Image.open("icons/delete.png"), size=(16, 16))
 
     openEntry.deleteButton = ctk.CTkButton(openEntry, image=deleteIcon, text="", height=12, width=12, command=lambda: delete(x))
-    openEntry.deleteButton.grid(row=6, column=2, padx=(10,20), pady=(10,20), ipadx=10, ipady=2, sticky="nsw")
+    openEntry.deleteButton.grid(row=8, column=2, padx=(10,20), pady=(10,20), ipadx=10, ipady=2, sticky="nsw")
 
     # edit = ctk.CTkButton(self, text="E", height=12, width=12)
     # edit.grid(row=3 + r, column=7, padx=10, sticky="w")
