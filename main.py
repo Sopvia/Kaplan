@@ -210,6 +210,13 @@ def getOverview(master, choice):
                 category = categoryWork[1]
             elif category == categoryPrivate[0]:
                 category = categoryPrivate[1]
+        else:
+            if category == categoryGeneral[1]:
+                category = categoryGeneral[0]
+            elif category == categoryWork[1]:
+                category = categoryWork[0]
+            elif category == categoryPrivate[1]:
+                category = categoryPrivate[0]
 
         labels[contact] = ctk.CTkLabel(master, text= f"{category}")
         labels[contact].grid(row=3 + r, column=0, padx=10, pady=5, sticky="nsw")
@@ -233,8 +240,8 @@ def getOverview(master, choice):
 class settings(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs, width=500, height=500)
-        self.grid_columnconfigure(1, weight=0)
-        self.grid_columnconfigure((2,3,4), weight=1)
+        self.grid_columnconfigure((1,2,3), weight=1)
+        self.grid_rowconfigure((0,1,2,3,4), weight=0)
 
         getName = """SELECT name FROM settings;"""
         cursor.execute(getName)
@@ -250,7 +257,7 @@ class settings(ctk.CTkFrame):
         self.nameEntry.grid(row=0, column=2, padx=10, pady=20, sticky="nsw")
 
         self.saveNameEntry = ctk.CTkButton(self, text=saveText[var], height=12, width=12, command=saveName)
-        self.saveNameEntry.grid(row=0, column=4, padx=(10,20), pady=20, ipadx=10, ipady=2, sticky="nes")
+        self.saveNameEntry.grid(row=0, column=3, padx=(10,20), pady=20, ipadx=10, ipady=2, sticky="nes")
 
         self.language = ctk.CTkButton(self, text="De/En", height=12, width=12, command=switchLanguage)
         self.language.grid(row=1, column=1, padx=20, pady=(20,10), ipadx=10, ipady=2, sticky="nesw")
@@ -263,7 +270,7 @@ class settings(ctk.CTkFrame):
         # self.langInfo = ctk.CTkLabel(self, text=languageInfo[var], height=12, width=12)
         # self.langInfo.grid(row=1, column=2, padx=(10,20), pady=20, sticky="nes")
 
-        self.mode = ctk.CTkButton(self, text="Dark/Light Mode", height=12, width=12, command=switchMode)
+        self.mode = ctk.CTkButton(self, text=modeText[var], height=12, width=12, command=switchMode)
         self.mode.grid(row=2, column=1, padx=20, pady=10, ipadx=10, ipady=2, sticky="nesw")
 
         self.theme = ctk.CTkOptionMenu(self, values=["Pink", "Blue"], height=12, width=12, command=changeTheme, state="disabled")
@@ -344,13 +351,13 @@ def changeTheme(choice):
 
 def openDetails(x):
     openEntry = ctk.CTkToplevel()
-    openEntry.geometry("350x450")
+    openEntry.geometry("400x450")
     openEntry.attributes('-topmost', 'true')
     openEntry.focus()
 
     openEntry.grid_rowconfigure((1,2,3,4,5,7,8), weight=0)
-    openEntry.grid_columnconfigure(1, weight=1)
-    openEntry.grid_columnconfigure(2, weight=2)
+    openEntry.grid_columnconfigure(3, weight=1)
+    openEntry.grid_columnconfigure((1,2), weight=2)
     
     for widgets in openEntry.winfo_children():
         widgets.destroy()
@@ -370,8 +377,23 @@ def openDetails(x):
 
     openEntry.title(f"{lastname}, {firstname}")
 
+    if var == 1:
+        if category == categoryGeneral[0]:
+            category = categoryGeneral[1]
+        elif category == categoryWork[0]:
+            category = categoryWork[1]
+        elif category == categoryPrivate[0]:
+            category = categoryPrivate[1]
+    else:
+        if category == categoryGeneral[1]:
+            category = categoryGeneral[0]
+        elif category == categoryWork[1]:
+            category = categoryWork[0]
+        elif category == categoryPrivate[1]:
+            category = categoryPrivate[0]
 
-    titles = [categoryText[var], lastnameText[var], firstnameText[var], emailText, phoneText[var], addressText[var], dateText[var]]
+
+    titles = [categoryText[var], lastnameText[var], firstnameText[var], emailText, phoneText[var], addressText[var], lastChangeText[var]]
 
     r = 0
 
@@ -387,29 +409,9 @@ def openDetails(x):
 
         r = r + 1
 
-    openEntry.categoryEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{category}")
-    openEntry.categoryEntry.grid(row=1, column=2, padx=(10,20), pady=(20,10), sticky="nw")
-
-    openEntry.lastnameEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{lastname}")
-    openEntry.lastnameEntry.grid(row=2, column=2, padx=(10,20), pady=(10,10), sticky="nw")
-
-    openEntry.firstnameEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{firstname}")
-    openEntry.firstnameEntry.grid(row=3, column=2, padx=(10,20), pady=(10,10), sticky="nw")
-
-    openEntry.emailEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{email}")
-    openEntry.emailEntry.grid(row=4, column=2, padx=(10,20), pady=(10,10), sticky="nw")
-
-    openEntry.phoneEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{phone}")
-    openEntry.phoneEntry.grid(row=5, column=2, padx=(10,20), pady=(10,10), sticky="nw")
-
-    openEntry.phoneEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{address}")
-    openEntry.phoneEntry.grid(row=6, column=2, padx=(10,20), pady=(10,10), sticky="nw")
-
-    openEntry.categoryEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{date}")
-    openEntry.categoryEntry.grid(row=7, column=2, padx=(10,20), pady=(10,10), sticky="nw")
-
-    openEntry.backButton = ctk.CTkButton(openEntry, text=closeText[var], height=12, width=12, command=openEntry.destroy)
-    openEntry.backButton.grid(row=8, column=1, padx=(20,10), pady=(10,20), ipadx=10, ipady=2, sticky="nesw")
+    def copy(text):
+        openEntry.clipboard_clear()
+        openEntry.clipboard_append(text)
 
     def delete(x):
         cursor.execute("DELETE FROM contacts WHERE id= ?", (x,))
@@ -417,13 +419,93 @@ def openDetails(x):
 
         openEntry.destroy()
 
+    
+    def save():
+        lastnameInput = openEntry.lastnameEntry.get()
+        firstnameInput = openEntry.firstnameEntry.get()
+        emailInput = openEntry.emailEntry.get()
+        phoneInput = openEntry.phoneEntry.get()
+        addressInput = openEntry.addressEntry.get()
+
+        if not ((lastnameInput or firstnameInput or emailInput or phoneInput or addressInput)):
+            messagebox.showerror('Error', editErrorText[var], parent=openEntry)
+        else:
+            now = datetime.now()
+            date = now.strftime("%d/%m/%Y %H:%M:%S")
+
+            if len(lastnameInput) >= 1:
+                update = """UPDATE contacts SET lastname = ?, date = ? WHERE id = ?"""
+                cursor.execute(update, (lastnameInput, date, x,))
+                connection.commit()
+
+            if len(firstnameInput) >= 1:
+                update = """UPDATE contacts SET firstname = ?, date = ? WHERE id = ?"""
+                cursor.execute(update, (firstnameInput, date, x,))
+                connection.commit()
+
+            if len(emailInput) >= 1:
+                update = """UPDATE contacts SET email = ?, date = ? WHERE id = ?"""
+                cursor.execute(update, (emailInput, date, x,))
+                connection.commit()
+
+            if len(phoneInput) >= 1:
+                update = """UPDATE contacts SET phone = ?, date = ? WHERE id = ?"""
+                cursor.execute(update, (phoneInput, date, x,))
+                connection.commit()
+
+            if len(addressInput) >= 1:
+                update = """UPDATE contacts SET address = ?, date = ? WHERE id = ?"""
+                cursor.execute(update, (addressInput, date, x,))
+                connection.commit()
+
+            openEntry.destroy()
+
+    openEntry.categoryLabel = ctk.CTkLabel(openEntry, text= f"{category}")
+    openEntry.categoryLabel.grid(row=1, column=2, padx=(10,10), pady=(20,10), sticky="nw")
+
+    openEntry.lastnameEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{lastname}")
+    openEntry.lastnameEntry.grid(row=2, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+
+    openEntry.copyButton = ctk.CTkButton(openEntry, text=copyText[var], height=12, width=12, command=lambda: copy(lastname))
+    openEntry.copyButton.grid(row=2, column=3, padx=(10,20), pady=(10,10), ipadx=10, ipady=2, sticky="nw")
+
+    openEntry.firstnameEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{firstname}")
+    openEntry.firstnameEntry.grid(row=3, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+
+    openEntry.copyButton = ctk.CTkButton(openEntry, text=copyText[var], height=12, width=12, command=lambda: copy(firstname))
+    openEntry.copyButton.grid(row=3, column=3, padx=(10,20), pady=(10,10), ipadx=10, ipady=2, sticky="nw")
+
+    openEntry.emailEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{email}")
+    openEntry.emailEntry.grid(row=4, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+
+    openEntry.copyButton = ctk.CTkButton(openEntry, text=copyText[var], height=12, width=12, command=lambda: copy(email))
+    openEntry.copyButton.grid(row=4, column=3, padx=(10,20), pady=(10,10), ipadx=10, ipady=2, sticky="nw")
+
+    openEntry.phoneEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{phone}")
+    openEntry.phoneEntry.grid(row=5, column=2, padx=(10,20), pady=(10,10), sticky="nw")
+
+    openEntry.copyButton = ctk.CTkButton(openEntry, text=copyText[var], height=12, width=12, command=lambda: copy(phone))
+    openEntry.copyButton.grid(row=5, column=3, padx=(10,20), pady=(10,10), ipadx=10, ipady=2, sticky="nw")
+
+    openEntry.addressEntry = ctk.CTkEntry(openEntry, placeholder_text= f"{address}")
+    openEntry.addressEntry.grid(row=6, column=2, padx=(10,10), pady=(10,10), sticky="nw")
+
+    openEntry.copyButton = ctk.CTkButton(openEntry, text=copyText[var], height=12, width=12, command=lambda: copy(address))
+    openEntry.copyButton.grid(row=6, column=3, padx=(10,20), pady=(10,20), ipadx=10, ipady=2, sticky="nw")
+
+    openEntry.dateLabel = ctk.CTkLabel(openEntry, text= f"{date}")
+    openEntry.dateLabel.grid(row=7, column=2, padx=(10,20), pady=(10,20), sticky="nw")
+
+    openEntry.backButton = ctk.CTkButton(openEntry, text=closeText[var], height=12, width=12, command=openEntry.destroy)
+    openEntry.backButton.grid(row=8, column=1, padx=(20,10), pady=(10,20), ipadx=10, ipady=2, sticky="nes")
+
     deleteIcon = ctk.CTkImage(light_image=Image.open("icons/delete.png"), dark_image=Image.open("icons/delete.png"), size=(16, 16))
 
     openEntry.deleteButton = ctk.CTkButton(openEntry, image=deleteIcon, text="", height=12, width=12, command=lambda: delete(x))
-    openEntry.deleteButton.grid(row=8, column=2, padx=(10,20), pady=(10,20), ipadx=10, ipady=2, sticky="nsw")
+    openEntry.deleteButton.grid(row=8, column=2, padx=(10,10), pady=(10,20), ipadx=10, ipady=2, sticky="ns")
 
-    # edit = ctk.CTkButton(self, text="E", height=12, width=12)
-    # edit.grid(row=3 + r, column=7, padx=10, sticky="w")
+    openEntry.saveEdit = ctk.CTkButton(openEntry, text=saveText[var], height=12, width=12, command=save)
+    openEntry.saveEdit.grid(row=8, column=3, padx=(10,20), pady=(10,20), sticky="nsw")
 
 
 root = root()
