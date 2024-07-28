@@ -250,11 +250,12 @@ class settings(ctk.CTkFrame):
         self.name = ctk.CTkLabel(self, text="Name", height=12, width=12)
         self.name.grid(row=0, column=1, padx=(20, 10), pady=20, sticky="nesw")
 
+        self.nameEntry = ctk.CTkEntry(self)
+        self.nameEntry.grid(row=0, column=2, padx=10, pady=20, sticky="nsw")
+
         if username[0] is not None:
             current_name = username[0]
-
-        self.nameEntry = ctk.CTkEntry(self, placeholder_text=current_name)
-        self.nameEntry.grid(row=0, column=2, padx=10, pady=20, sticky="nsw")
+            self.nameEntry.configure(placeholder_text=current_name)
 
         self.saveNameEntry = ctk.CTkButton(self, text=saveText[var], height=12, width=12, command=saveName)
         self.saveNameEntry.grid(row=0, column=3, padx=(10,20), pady=20, ipadx=10, ipady=2, sticky="nes")
